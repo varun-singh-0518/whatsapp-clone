@@ -5,7 +5,7 @@ import {authMiddleware} from "@clerk/nextjs/server";
 // for more information about configuring your Middleware
 export default authMiddleware({
   // Allow signed out users to access the specified routes:
-  // publicRoutes: ["/"],
+  publicRoutes: ["/"],
 });
 
 export const config = {
@@ -17,3 +17,11 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+
+// import { clerkMiddleware } from "@clerk/nextjs/server";
+
+// export default clerkMiddleware();
+
+// export const config = {
+//   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+// };
