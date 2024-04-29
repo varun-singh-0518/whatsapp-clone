@@ -82,7 +82,7 @@ export const getMessages = query({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized");
+      throw new ConvexError("Unauthorized");
     }
 
     const messages = await ctx.db
