@@ -29,8 +29,8 @@ const UserListDialog = () => {
   const imgRef = useRef<HTMLInputElement>(null);
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
 
-  const createConversation = useMutation(api.conversation.createConversation);
-  const generateUploadUrl = useMutation(api.conversation.generateUploadUrl);
+  const createConversation = useMutation(api.conversations.createConversation);
+  const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
   const me = useQuery(api.users.getMe);
   const users = useQuery(api.users.getUsers);
 

@@ -62,9 +62,7 @@ export const getMyConversations = query({
       )
       .unique();
 
-    if (!user) {
-      throw new ConvexError("User not found");
-    }
+    if (!user) throw new ConvexError("User not found");
 
     const conversations = await ctx.db.query("conversations").collect();
 
@@ -94,7 +92,7 @@ export const getMyConversations = query({
           .order("desc")
           .take(1);
 
-        //NOTE: return should be in this order, otherwise _id field will be overwritten
+        // return should be in this order, otherwise _id field will be overwritten
         return {
           ...userDetails,
           ...conversation,
@@ -104,6 +102,30 @@ export const getMyConversations = query({
     );
 
     return conversationsWithDetails;
+  },
+});
+
+export const kickUser = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new ConvexError("Unauthorized");
+
+    const conversation = await ctx.db
+      .query("conversations")
+      .filter((q) => q.eq(q.field("_id"), args.conversationId))
+      .unique();
+
+    if (!conversation) throw new ConvexError("Conversation not found");
+
+    await ctx.db.patch(args.conversationId, {
+      participants: conversation.participants.filter(
+        (id) => id !== args.userId
+      ),
+    });
   },
 });
 

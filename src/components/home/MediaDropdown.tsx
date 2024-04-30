@@ -23,7 +23,7 @@ const MediaDropdown = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const generateUploadUrl = useMutation(api.conversation.generateUploadUrl);
+  const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
   const sendImage = useMutation(api.messages.sendImage);
   const sendVideo = useMutation(api.messages.sendVideo);
   const me = useQuery(api.users.getMe);
