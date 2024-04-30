@@ -17,6 +17,7 @@ import {Id} from "../../../convex/_generated/dataModel";
 import {useMutation, useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
+import {useConversationStore} from "@/store/chatStore";
 
 const UserListDialog = () => {
   const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
@@ -33,9 +34,10 @@ const UserListDialog = () => {
   const me = useQuery(api.users.getMe);
   const users = useQuery(api.users.getUsers);
 
+  const {setSelectedConversation} = useConversationStore();
+
   const handleCreateConversation = async () => {
     if (selectedUsers.length === 0) return;
-
     setIsLoading(true);
     try {
       const isGroup = selectedUsers.length > 1;
@@ -57,7 +59,7 @@ const UserListDialog = () => {
 
         const {storageId} = await result.json();
 
-        await createConversation({
+        conversationId = await createConversation({
           participants: [...selectedUsers, me?._id!],
           isGroup: true,
           admin: me?._id!,
@@ -71,7 +73,21 @@ const UserListDialog = () => {
       setGroupName("");
       setSelectedImage(null);
 
-      //TODO: update a global state called "selectedConversation"
+      // TODO => Update a global state called "selectedConversation"
+      const conversationName = isGroup
+        ? groupName
+        : users?.find((user) => user._id === selectedUsers[0])?.name;
+
+      setSelectedConversation({
+        _id: conversationId,
+        participants: selectedUsers,
+        isGroup,
+        image: isGroup
+          ? renderedImage
+          : users?.find((user) => user._id === selectedUsers[0])?.image,
+        name: conversationName,
+        admin: me?._id!,
+      });
     } catch (err) {
       toast.error("Failed to create conversation");
       console.error(err);
@@ -81,10 +97,7 @@ const UserListDialog = () => {
   };
 
   useEffect(() => {
-    if (!selectedImage) {
-      return setRenderedImage("");
-    }
-
+    if (!selectedImage) return setRenderedImage("");
     const reader = new FileReader();
     reader.onload = (e) => setRenderedImage(e.target?.result as string);
     reader.readAsDataURL(selectedImage);
@@ -114,10 +127,11 @@ const UserListDialog = () => {
           </div>
         )}
         {/* TODO: input file */}
-        <Input
+        <input
           type="file"
           accept="image/*"
           ref={imgRef}
+          hidden
           onChange={(e) => setSelectedImage(e.target.files![0])}
         />
         {selectedUsers.length > 1 && (
