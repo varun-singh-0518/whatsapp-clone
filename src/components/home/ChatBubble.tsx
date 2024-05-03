@@ -23,9 +23,9 @@ const ChatBubble = ({me, message, previousMessage}: ChatBubbleProps) => {
 
   const {selectedConversation} = useConversationStore();
   const isMember =
-    selectedConversation?.participants.includes(message.sender._id) || false;
+    selectedConversation?.participants.includes(message.sender?._id) || false;
   const isGroup = selectedConversation?.isGroup;
-  const fromMe = message.sender._id === me._id;
+  const fromMe = message.sender?._id === me._id;
 
   const bgClass = fromMe ? "bg-green-chat" : "bg-white dark:bg-gray-primary";
 

@@ -2,6 +2,7 @@ import ChatBubble from "./ChatBubble";
 import {useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import {useConversationStore} from "@/store/chatStore";
+import {useEffect, useRef} from "react";
 
 const MessageContainer = () => {
   const {selectedConversation} = useConversationStore();
@@ -9,6 +10,13 @@ const MessageContainer = () => {
   const messages = useQuery(api.messages.getMessages, {
     conversation: selectedConversation!._id,
   });
+  const lastMsgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      lastMsgRef.current?.scrollIntoView({behavior: "smooth"});
+    }, 100);
+  }, [messages]);
 
   return (
     <div className="relative p-3 flex-1 overflow-auto h-full bg-chat-tile-light dark:bg-chat-tile-dark">

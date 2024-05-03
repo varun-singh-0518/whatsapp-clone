@@ -126,8 +126,6 @@ export const getMe = query({
   },
 });
 
-//TODO: add getGroupMembers query
-
 export const getGroupMembers = query({
   args: {conversationId: v.id("conversations")},
   handler: async (ctx, args) => {
